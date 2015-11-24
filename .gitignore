@@ -1,0 +1,5 @@
+build*Debug/
+build*Release/
+*.user
+*.so
+*.o
