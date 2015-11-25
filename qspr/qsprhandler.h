@@ -45,11 +45,14 @@ private:
     static bool readSpriteHeader(QIODevice* device, SpriteHeader* header);
     static QVector<QRgb> readPalette(QIODevice* device, const SpriteHeader& header);
 
+    bool readFrame(QImage *presult);
+
     SpriteHeader _header;
     QVector<QRgb> _palette;
+    QVector<QImage> _frames; //cache
     int _frameIndex;
     int _nextIndex;
-    QVector<QImage> _frames;
+    qint64 _startPos;
 };
 
 #endif // QSPRHANDLER_H

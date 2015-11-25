@@ -172,16 +172,21 @@ QVector<QRgb> QSprHandler::readPalette(QIODevice *device, const SpriteHeader &he
     }
 }
 
-QSprHandler::QSprHandler() : _frameIndex(-1), _nextIndex(0)
+QSprHandler::QSprHandler() : _frameIndex(-1), _nextIndex(0), _startPos(0)
 {
 }
 
 bool QSprHandler::canRead() const
 {
     if (_frameIndex == -1) {
-        return canRead(device());
+        if (canRead(device())) {
+            setFormat("spr");
+            return true;
+        } else {
+            return false;
+        }
     } else {
-        return _nextIndex >= 0 && _nextIndex < _frames.size();
+        return _nextIndex >= 0 && _nextIndex < _header.numFrames;
     }
 }
 
@@ -197,7 +202,7 @@ int QSprHandler::imageCount() const
 
 bool QSprHandler::jumpToImage(int imageNumber)
 {
-    if (imageNumber >= 0 && imageNumber < _frames.size()) {
+    if (imageNumber >= 0 && imageNumber < _header.numFrames) {
         _nextIndex = imageNumber;
         return true;
     }
@@ -206,7 +211,7 @@ bool QSprHandler::jumpToImage(int imageNumber)
 
 bool QSprHandler::jumpToNextImage()
 {
-    return _frames.size() && jumpToImage((_frameIndex + 1) % _frames.size());
+    return _header.numFrames && jumpToImage((_frameIndex + 1) % _header.numFrames);
 }
 
 int QSprHandler::loopCount() const
@@ -231,7 +236,7 @@ QVariant QSprHandler::option(ImageOption option) const
         if (ok) {
             return header.size;
         }
-    } /*else if (option == BackgroundColor) {
+    } else if (option == BackgroundColor) {
         qint64 pos = device()->pos();
         QColor color;
         SpriteHeader header;
@@ -243,7 +248,7 @@ QVariant QSprHandler::option(ImageOption option) const
         }
         device()->seek(pos);
         return color;
-    }*/ else if (option == Animation) {
+    } else if (option == Animation) {
         return true;
     }
     return QVariant();
@@ -261,54 +266,80 @@ bool QSprHandler::read(QImage *image)
             if (_palette.empty()) {
                 return false;
             }
-
-            for (int i=0; i<_header.numFrames; ++i) {
-                dspriteframetype_t frametype;
-                if (!readStruct(device(), frametype)) {
-                    return false;
-                }
-                makeHostEndians(frametype);
-
-                if (frametype.type == SPR_SINGLE) {
-                    dspriteframe_t frameStruct;
-                    if (!readStruct(device(), frameStruct)) {
-                        return false;
-                    }
-                    makeHostEndians(frameStruct);
-
-                    QByteArray dataArr = device()->read(frameStruct.width*frameStruct.height);
-                    if (dataArr.size() != frameStruct.width*frameStruct.height) {
-                        return false;
-                    }
-
-                    const uchar* dataBytes = reinterpret_cast<const uchar*>(dataArr.constData());
-                    QImage result(frameStruct.width, frameStruct.height, QImage::Format_Indexed8);
-                    result.setColorTable(_palette);
-
-                    uchar* imageData = result.bits();
-                    for (int j=0; j<frameStruct.width*frameStruct.height; ++j) {
-                        imageData[j] = dataBytes[j];
-                    }
-                    _frames.append(result);
-                } else {
-                    return false;
-                }
-            }
+            _startPos = device()->pos();
         } else {
             return false;
         }
     }
 
-    if (_nextIndex < _frames.size() ) {
-        *image = _frames[_nextIndex];
-        _frameIndex = _nextIndex++;
-        return true;
+    if (_nextIndex < _header.numFrames ) {
+        if (_nextIndex == 0 && _frames.empty()) {
+            QImage result;
+            if (readFrame(&result)) {
+                _frames.append(result);
+            } else {
+                return false;
+            }
+        }
+
+        if (_nextIndex > 0 && _frames.size() == 1) {
+            //cache all frames when requested frame other than the first
+            for (int i=1; i<_header.numFrames; ++i) {
+                QImage image;
+                if (readFrame(&image)) {
+                    _frames.append(image);
+                } else {
+                    return false;
+                }
+            }
+        }
+
+        if (_nextIndex < _frames.size()) {
+            *image = _frames.at(_nextIndex);
+            _frameIndex = _nextIndex++;
+            return true;
+        }
     }
 
     return false;
 }
 
+bool QSprHandler::readFrame(QImage *presult)
+{
+    dspriteframetype_t frametype;
+    if (!readStruct(device(), frametype)) {
+        return false;
+    }
+    makeHostEndians(frametype);
+
+    if (frametype.type == SPR_SINGLE) {
+        dspriteframe_t frameStruct;
+        if (!readStruct(device(), frameStruct)) {
+            return false;
+        }
+        makeHostEndians(frameStruct);
+
+        QByteArray dataArr = device()->read(frameStruct.width*frameStruct.height);
+        if (dataArr.size() != frameStruct.width*frameStruct.height) {
+            return false;
+        }
+
+        const uchar* dataBytes = reinterpret_cast<const uchar*>(dataArr.constData());
+        QImage result(frameStruct.width, frameStruct.height, QImage::Format_Indexed8);
+        result.setColorTable(_palette);
+
+        uchar* imageData = result.bits();
+        for (int j=0; j<frameStruct.width*frameStruct.height; ++j) {
+            imageData[j] = dataBytes[j];
+        }
+        *presult = result;
+        return true;
+    } else {
+        return false;
+    }
+}
+
 bool QSprHandler::supportsOption(ImageOption option) const
 {
-    return option == ImageFormat || option == Size || option == Animation;
+    return option == ImageFormat || option == Size || option == Animation || option == BackgroundColor;
 }

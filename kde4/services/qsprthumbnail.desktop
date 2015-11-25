@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Service
+Name=Half-Life Sprites
+X-KDE-ServiceTypes=ThumbCreator
+MimeType=image/x-hlsprite;application/x-hlsprite;image/x-qsprite;application/x-qsprite;
+X-KDE-Library=imagethumbnail
+CacheThumbnail=true
