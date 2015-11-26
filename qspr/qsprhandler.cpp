@@ -79,13 +79,11 @@ bool QSprHandler::canRead(QIODevice *device, int* version)
 
     qint64 oldPos = device->pos();
 
-    int id = 0;
-    int ver = 0;
-    readStruct(device, id);
-    readStruct(device, ver);
+    QDataStream stream(device);
+    stream.setByteOrder(QDataStream::LittleEndian);
 
-    id = qFromLittleEndian(id);
-    ver = qFromLittleEndian(ver);
+    int id, ver;
+    stream >> id >> ver;
 
     if (version) {
         *version = ver;
@@ -93,7 +91,7 @@ bool QSprHandler::canRead(QIODevice *device, int* version)
 
     device->seek(oldPos);
 
-    return id == IDSPRITEHEADER && (ver == SPRITE_HL_VERSION || ver == SPRITE_QUAKE_VERSION);
+    return stream.status() == QDataStream::Ok && id == IDSPRITEHEADER && (ver == SPRITE_HL_VERSION || ver == SPRITE_QUAKE_VERSION);
 }
 
 bool QSprHandler::readSpriteHeader(QIODevice* device, SpriteHeader* header)
@@ -103,31 +101,29 @@ bool QSprHandler::readSpriteHeader(QIODevice* device, SpriteHeader* header)
         return false;
     }
 
+    QDataStream stream(device);
+    stream.setByteOrder(QDataStream::LittleEndian);
+    stream.setFloatingPointPrecision(QDataStream::SinglePrecision);
+
     if (version == SPRITE_HL_VERSION) {
         dsprite_t sprHeader;
-        if (device->read(reinterpret_cast<char*>(&sprHeader), dsprite_t::SIZE) != dsprite_t::SIZE) {
-            return false;
-        }
-        makeHostEndians(sprHeader);
+        stream >> sprHeader;
 
         header->version = sprHeader.version;
         header->type = sprHeader.type;
         header->texFormat = sprHeader.texFormat;
         header->numFrames = sprHeader.numframes;
         header->size = QSize(sprHeader.width, sprHeader.height);
-        return true;
+        return stream.status() == QDataStream::Ok;
     } else if (version == SPRITE_QUAKE_VERSION) {
         dquakesprite_t sprHeader;
-        if (device->read(reinterpret_cast<char*>(&sprHeader), dquakesprite_t::SIZE) != dquakesprite_t::SIZE) {
-            return false;
-        }
-        makeHostEndians(sprHeader);
+        stream >> sprHeader;
 
         header->version = sprHeader.version;
         header->type = sprHeader.type;
         header->numFrames = sprHeader.numframes;
         header->size = QSize(sprHeader.width, sprHeader.height);
-        return true;
+        return stream.status() == QDataStream::Ok;
     } else {
         return false;
     }
@@ -136,17 +132,17 @@ bool QSprHandler::readSpriteHeader(QIODevice* device, SpriteHeader* header)
 QVector<QRgb> QSprHandler::readPalette(QIODevice *device, const SpriteHeader &header)
 {
     if (header.version == SPRITE_HL_VERSION) {
-        short paletteSize;
-        if (!readStruct(device, paletteSize)) {
-            return QVector<QRgb>();
-        }
-        paletteSize = qFromLittleEndian(paletteSize);
+        QDataStream stream(device);
+        stream.setByteOrder(QDataStream::LittleEndian);
+        short paletteSize = 0;
+        stream >> paletteSize;
+
         if (paletteSize != 256) {
             return QVector<QRgb>();
         }
 
-        QByteArray paletteBytes = device->read(paletteSize*3);
-        if (paletteBytes.size() != paletteSize*3) {
+        QByteArray paletteBytes(paletteSize*3, '\0');
+        if (stream.readRawData(paletteBytes.data(), paletteBytes.size()) < paletteBytes.size()) {
             return QVector<QRgb>();
         }
 
@@ -163,13 +159,15 @@ QVector<QRgb> QSprHandler::readPalette(QIODevice *device, const SpriteHeader &he
                 palette[i] = qRgba(data[i*3+0], data[i*3+1], data[i*3+2], 0xFF);
         }
         return palette;
-    } else {
+    } else if (header.version == SPRITE_QUAKE_VERSION) {
         QVector<QRgb> palette(256);
         const quint8* pal = quakePalette();
         for (int i=0; i<palette.size(); ++i) {
             palette[i] = qRgba(pal[i*3+0], pal[i*3+1], pal[i*3+2], 0xFF);
         }
         return palette;
+    } else {
+        return QVector<QRgb>();
     }
 }
 
@@ -307,23 +305,18 @@ bool QSprHandler::read(QImage *image)
 
 bool QSprHandler::readFrame(QImage *presult)
 {
+    QDataStream stream(device());
+    stream.setByteOrder(QDataStream::LittleEndian);
+
     dspriteframetype_t frametype;
-    if (!readStruct(device(), frametype)) {
-        return false;
-    }
-    makeHostEndians(frametype);
+    stream >> frametype;
 
     if (frametype.type == SPR_SINGLE) {
         dspriteframe_t frameStruct;
-        if (!readStruct(device(), frameStruct)) {
-            return false;
-        }
-        makeHostEndians(frameStruct);
+        stream >> frameStruct;
 
-        QByteArray dataArr = device()->read(frameStruct.width*frameStruct.height);
-        if (dataArr.size() != frameStruct.width*frameStruct.height) {
-            return false;
-        }
+        QByteArray dataArr(frameStruct.width*frameStruct.height, '\0');
+        stream.readRawData(dataArr.data(), dataArr.size());
 
         const uchar* dataBytes = reinterpret_cast<const uchar*>(dataArr.constData());
         QImage result(frameStruct.width, frameStruct.height, QImage::Format_Indexed8);

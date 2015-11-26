@@ -81,16 +81,6 @@ typedef struct {
     spriteframetype_t	type;
 } dspriteframetype_t;
 
-void makeHostEndians(dsprite_t &header);
-void makeHostEndians(dquakesprite_t& header);
-void makeHostEndians(dspriteframetype_t& frameType);
-void makeHostEndians(dspriteframe_t& frame);
-
-void makeLittleEndians(dsprite_t& header);
-void makeLittleEndians(dquakesprite_t& header);
-void makeLittleEndians(dspriteframetype_t& frameType);
-void makeLittleEndians(dspriteframe_t& frame);
-
 QDataStream &operator<<(QDataStream &, const dsprite_t &);
 QDataStream &operator>>(QDataStream &, dsprite_t &);
 
