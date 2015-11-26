@@ -11,6 +11,7 @@ TEMPLATE = lib
 CONFIG += plugin
 
 #DESTDIR = $$[QT_INSTALL_PLUGINS]/imageformats
+#DESTDIR = $$PWD/../plugins/imageformats
 
 SOURCES += qsprplugin.cpp \
     qsprhandler.cpp \

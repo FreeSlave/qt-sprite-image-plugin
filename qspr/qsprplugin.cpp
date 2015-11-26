@@ -17,7 +17,7 @@ QImageIOHandler* QSprPlugin::create(QIODevice *device, const QByteArray &format)
 QImageIOPlugin::Capabilities QSprPlugin::capabilities(QIODevice *device, const QByteArray &format) const
 {
     if (format == "spr" || format == "SPR")
-        return Capabilities(CanRead);
+        return Capabilities(CanRead|CanWrite);
     if (!format.isEmpty())
         return 0;
     if (!device->isOpen())
@@ -26,6 +26,9 @@ QImageIOPlugin::Capabilities QSprPlugin::capabilities(QIODevice *device, const Q
     Capabilities cap = 0;
     if (device->isReadable() && QSprHandler::canRead(device)) {
         cap |= CanRead;
+    }
+    if (device->isWritable()) {
+        cap |= CanWrite;
     }
     return cap;
 }

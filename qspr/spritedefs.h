@@ -1,6 +1,8 @@
 #ifndef SPRITEDEFS_H
 #define SPRITEDEFS_H
 
+#include <QDataStream>
+
 #define SPRITE_QUAKE_VERSION	1
 #define SPRITE_HL_VERSION	2
 
@@ -8,7 +10,9 @@ enum {
     IDSPRITEHEADER = (('P'<<24)+('S'<<16)+('D'<<8)+'I')
 };
 
-typedef enum {ST_SYNC=0, ST_RAND } synctype_t;
+enum {ST_SYNC=0, ST_RAND };
+
+typedef int synctype_t;
 
 typedef struct {
     int			ident;
@@ -70,7 +74,8 @@ typedef struct {
     float	interval;
 } dspriteinterval_t;
 
-typedef enum { SPR_SINGLE=0, SPR_GROUP } spriteframetype_t;
+enum { SPR_SINGLE=0, SPR_GROUP };
+typedef int spriteframetype_t;
 
 typedef struct {
     spriteframetype_t	type;
@@ -85,5 +90,17 @@ void makeLittleEndians(dsprite_t& header);
 void makeLittleEndians(dquakesprite_t& header);
 void makeLittleEndians(dspriteframetype_t& frameType);
 void makeLittleEndians(dspriteframe_t& frame);
+
+QDataStream &operator<<(QDataStream &, const dsprite_t &);
+QDataStream &operator>>(QDataStream &, dsprite_t &);
+
+QDataStream &operator<<(QDataStream &, const dquakesprite_t &);
+QDataStream &operator>>(QDataStream &, dquakesprite_t &);
+
+QDataStream &operator<<(QDataStream &, const dspriteframetype_t &);
+QDataStream &operator>>(QDataStream &, dspriteframetype_t &);
+
+QDataStream &operator<<(QDataStream &, const dspriteframe_t &);
+QDataStream &operator>>(QDataStream &, dspriteframe_t &);
 
 #endif // SPRITEDEFS_H

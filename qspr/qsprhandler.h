@@ -38,6 +38,7 @@ public:
     QVariant option(ImageOption option) const;
     bool read(QImage *image);
     bool supportsOption(ImageOption option) const;
+    bool write(const QImage &image);
 
     static bool canRead(QIODevice* device, int *version = 0);
 

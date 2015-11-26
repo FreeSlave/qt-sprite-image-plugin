@@ -3,6 +3,7 @@
 #include <QVariant>
 #include <QImage>
 #include <QColor>
+#include <cmath>
 
 #include "qsprhandler.h"
 #include "spritedefs.h"
@@ -342,4 +343,60 @@ bool QSprHandler::readFrame(QImage *presult)
 bool QSprHandler::supportsOption(ImageOption option) const
 {
     return option == ImageFormat || option == Size || option == Animation || option == BackgroundColor;
+}
+
+bool QSprHandler::write(const QImage &image)
+{
+    const QSize size = image.size();
+
+    dsprite_t header;
+    header.ident = IDSPRITEHEADER;
+    header.version = SPRITE_HL_VERSION;
+    header.type = SPR_VP_PARALLEL;
+    header.texFormat = SPR_ADDITIVE;
+    header.boundingradius = sqrt(static_cast<float>(size.width()*size.width() + size.height()*size.height()))/2;
+    header.width = size.width();
+    header.height = size.height();
+    header.numframes = 1;
+    header.beamlength = 0;
+    header.synctype = ST_SYNC;
+
+    QDataStream stream(device());
+    stream.setByteOrder(QDataStream::LittleEndian);
+    stream.setFloatingPointPrecision(QDataStream::SinglePrecision);
+    stream << header;
+
+    QImage converted = image.convertToFormat(QImage::Format_Indexed8);
+    QVector<QRgb> colorTable = converted.colorTable();
+    colorTable.resize(256);
+    short paletteSize = static_cast<short>(colorTable.size());
+
+    stream << paletteSize;
+
+    quint8* palBytes = new quint8[paletteSize*3];
+    for (int i=0; i<colorTable.size(); ++i)
+    {
+        QRgb rgb = colorTable.at(i);
+        palBytes[i*3+0] = static_cast<quint8>(qRed(rgb));
+        palBytes[i*3+1] = static_cast<quint8>(qGreen(rgb));
+        palBytes[i*3+2] = static_cast<quint8>(qBlue(rgb));
+    }
+
+    stream.writeRawData(reinterpret_cast<const char*>(palBytes), paletteSize*3);
+    delete[]palBytes;
+
+    dspriteframetype_t frametype;
+    frametype.type = SPR_SINGLE;
+
+    dspriteframe_t frame;
+    frame.origin[0] = -size.width()/2;
+    frame.origin[1] = size.height()/2;
+    frame.width = size.width();
+    frame.height = size.height();
+
+    stream << frametype;
+    stream << frame;
+    stream.writeRawData(reinterpret_cast<const char*>(converted.bits()), size.width() * size.height());
+
+    return stream.status() != QDataStream::WriteFailed;
 }
