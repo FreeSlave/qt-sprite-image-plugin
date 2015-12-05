@@ -11,7 +11,6 @@ TEMPLATE = lib
 CONFIG += plugin
 
 #DESTDIR = $$[QT_INSTALL_PLUGINS]/imageformats
-#DESTDIR = $$PWD/../plugins/imageformats
 
 SOURCES += qsprplugin.cpp \
     qsprhandler.cpp \
@@ -20,7 +19,10 @@ SOURCES += qsprplugin.cpp \
 HEADERS += qsprplugin.h \
     qsprhandler.h \
     spritedefs.h
-OTHER_FILES += qspr.json
+OTHER_FILES += qspr.json \
+    qspr.desktop \
+    qsprthumbnail.desktop \
+    qspr.xml
 
 unix {
     target.path = /usr/lib

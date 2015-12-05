@@ -1,0 +1,29 @@
+cmake_minimum_required(VERSION 2.8.12)
+
+project(qspr)
+
+find_package(Qt4 4.6.0 REQUIRED QtGui QtCore)
+find_package(KDE4 REQUIRED)
+include (KDE4Defaults)
+
+find_package(SharedMimeInfo 0.60)
+set_package_properties(SharedMimeInfo PROPERTIES DESCRIPTION "Shared Mime Info"
+                       URL "http://freedesktop.org/wiki/Software/shared-mime-info"
+                       TYPE REQUIRED
+                       PURPOSE "Allows KDE applications to determine file types"
+                      )
+
+include_directories( ${CMAKE_CURRENT_BINARY_DIR} ${QT_QTCORE_INCLUDE_DIR} ${QT_QTGUI_INCLUDE_DIR} )
+
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${KDE4_ENABLE_EXCEPTIONS}")
+
+set(kimg_qspr_LIB_SRCS qsprhandler.cpp qsprplugin.cpp spritedefs.cpp)
+kde4_add_plugin(kimg_qspr ${kimg_qspr_LIB_SRCS})
+target_link_libraries(kimg_qspr ${QT_QTGUI_LIBRARY} ${QT_QTCORE_LIBRARY})
+
+install(TARGETS kimg_qspr  DESTINATION ${PLUGIN_INSTALL_DIR}/plugins/imageformats/ )
+install(FILES qspr.desktop DESTINATION ${SERVICES_INSTALL_DIR}/qimageioplugins/)
+install(FILES qsprthumbnail.desktop DESTINATION ${SERVICES_INSTALL_DIR})
+
+install(FILES qspr.xml DESTINATION ${XDG_MIME_INSTALL_DIR})
+update_xdg_mimetypes(${XDG_MIME_INSTALL_DIR})

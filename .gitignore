@@ -1,7 +1,9 @@
 build*Debug/
 build*Release/
+build
 *.user
 *.so
 *.o
 *.dll
 *.obj
+Makefile
