@@ -316,7 +316,9 @@ bool QSprHandler::readFrame(QImage *presult)
         stream >> frameStruct;
 
         QByteArray dataArr(frameStruct.width*frameStruct.height, '\0');
-        stream.readRawData(dataArr.data(), dataArr.size());
+        if (stream.readRawData(dataArr.data(), dataArr.size()) < dataArr.size()) {
+            return false;
+        }
 
         const uchar* dataBytes = reinterpret_cast<const uchar*>(dataArr.constData());
         QImage result(frameStruct.width, frameStruct.height, QImage::Format_Indexed8);
@@ -327,7 +329,7 @@ bool QSprHandler::readFrame(QImage *presult)
             imageData[j] = dataBytes[j];
         }
         *presult = result;
-        return true;
+        return stream.status() == QDataStream::Ok;
     } else {
         return false;
     }

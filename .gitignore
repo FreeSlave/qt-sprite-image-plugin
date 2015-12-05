@@ -3,3 +3,5 @@ build*Release/
 *.user
 *.so
 *.o
+*.dll
+*.obj
