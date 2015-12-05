@@ -2,9 +2,9 @@
 <mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
     <!-- Sprite types -->
     
-    <mime-type type="application/x-qsprite">
+    <mime-type type="image/x-qsprite">
         <comment>Quake sprite</comment>
-        <icon name="application-x-qsprite"/>
+        <icon name="image-x-qsprite"/>
         <generic-icon name="image-x-generic"/>
         <magic priority="50">
             <match value="IDSP" type="string" offset="0">
@@ -17,7 +17,7 @@
     
     <mime-type type="image/x-hlsprite">
         <comment>Half-Life sprite</comment>
-        <icon name="application-x-hlsprite"/>
+        <icon name="image-x-hlsprite"/>
         <generic-icon name="image-x-generic"/>
         <magic priority="50">
             <match value="IDSP" type="string" offset="0">
@@ -30,7 +30,7 @@
     
     <mime-type type="image/x-q2sprite">
         <comment>Quake II sprite</comment>
-        <icon name="application-x-q2sprite"/>
+        <icon name="image-x-q2sprite"/>
         <generic-icon name="image-x-generic"/>
         <magic priority="50">
             <match value="IDS2" type="string" offset="0"/>

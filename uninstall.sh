@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ $EUID -ne 0 ]; then
+if [ $(id -u) -ne 0 ]; then
    KDEBASE="$HOME/.kde4"
    
    if [ ! -d "$KDEBASE" ]; then

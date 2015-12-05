@@ -3,7 +3,8 @@ QImageIOPlugin for Qt that provides support for Half-Life and Quake *.spr files.
 ## Installing for KDE4
 
 This plugin is specially useful when using with KDE.
-After installing Dolphin and Krusader should be able to show sprite previews and Gwenview should be able to show sprite animation.
+After plugin is installed Gwenview should be able to show sprite animation.
+To enable sprite previews in Dolphin and Krusader you must enable "Half-Life sprites" in Dolphin General/Previews settings.
 
 ### Using CMake
 
