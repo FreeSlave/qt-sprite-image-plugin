@@ -1,0 +1,7 @@
+qspr/*
+qt4-qspr/*
+qt5-qspr/*
+kde4-qspr/*
+!qt4-qspr/debian
+!qt5-qspr/debian
+!kde4-qspr/debian

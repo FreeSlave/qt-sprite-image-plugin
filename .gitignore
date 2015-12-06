@@ -7,3 +7,9 @@ build
 *.dll
 *.obj
 Makefile
+*.dsc
+*.build
+*.changes
+*.deb
+*.tar.gz
+*.tar.xz
