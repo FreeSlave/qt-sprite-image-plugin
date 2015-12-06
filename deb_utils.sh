@@ -64,13 +64,13 @@ if [ -z $1 ]; then
     exit 1
 fi
 
-if [ $1 == "sources" ]; then
+if [ $1 = "sources" ]; then
     echo "Creating sources"
     prepare_source
     create_source "$QT4QSPR"
     create_source "$QT5QSPR"
     create_source "$KDE4QSPR"
-elif [ $1 == "pbuilder" ]; then
+elif [ $1 = "pbuilder" ]; then
     echo "Creating/Updating pbuilder chroots"
     
     case "$(uname -m)" in
@@ -89,7 +89,7 @@ elif [ $1 == "pbuilder" ]; then
             ;;
     esac
     
-elif [ $1 == "packages" ]; then
+elif [ $1 = "packages" ]; then
     echo "Creating packages"
     
     case "$(uname -m)" in
