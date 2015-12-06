@@ -38,5 +38,7 @@ fi
 install -m644 qspr/libqspr.so $KDE_IMAGEFORMATS/kimg_qspr.so
 install -m644 qspr/qsprthumbnail.desktop $KDE_SERVICES
 install -m644 qspr/qspr.desktop $KDE_IMAGEIOFORMATS
+install -m644 qspr/hlspr.desktop $KDE_IMAGEIOFORMATS
+install -m644 qspr/spr32.desktop $KDE_IMAGEIOFORMATS
 install -m644 qspr/qspr.xml "$MIME_PACKAGES"
 update-mime-database "$MIME_DIR"

@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Service
 X-KDE-ServiceTypes=QImageIOPlugins
-X-KDE-ImageFormat=spr
-X-KDE-MimeType=image/x-qsprite
+X-KDE-ImageFormat=spr,sp2,spr32
+X-KDE-MimeType=image/x-sprite32
 X-KDE-Read=true

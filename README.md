@@ -2,11 +2,30 @@ QImageIOPlugin for Qt that provides support for Half-Life and Quake *.spr files.
 
 ## Installing for KDE4
 
-This plugin is specially useful when using with KDE.
+This plugin is specially useful when using with KDE. There're several ways to install it (see below).
 After plugin is installed Gwenview should be able to show sprite animation.
 To enable sprite previews in Dolphin and Krusader you must enable "Half-Life sprites" in Dolphin General/Previews settings.
 
+### Using qmake-qt4 and scripts
+
+This method will install plugin only for the current user. It does not require root privileges.
+
+Install dependencies (these are for for Debian jessie):
+
+    sudo apt-get install libqt4-dev qt4-qmake
+    
+Building and installing:
+
+    (cd qspr && qmake-qt4 && make)
+    ./install.sh
+    
+To uninstall type:
+
+    ./uninstall.sh
+
 ### Using CMake
+
+This method will install plugin globally on the system (for all users). It requires root privileges.
 
 Install dependencies (these are for for Debian jessie):
 
@@ -25,19 +44,4 @@ Note: it may take some time due to mime database updating.
 To uninstall type:
 
     sudo make uninstall
-
-### Using qmake-qt4 and scripts
-
-Install dependencies (these are for for Debian jessie):
-
-    sudo apt-get install libqt4-dev qt4-qmake
-    
-Building and installing:
-
-    (cd qspr && qmake-qt4 && make && cd ..)
-    ./install.sh
-    
-To uninstall type:
-
-    ./uninstall.sh
     

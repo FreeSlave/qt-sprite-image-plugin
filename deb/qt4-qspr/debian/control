@@ -9,5 +9,5 @@ Homepage: https://bitbucket.org/FreeSlave/qt-sprite-image-plugin
 Package: qt4-qspr
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: Qt image plugin for
- Half-Life and Quake sprites
+Description: Qt4 image format plugin 
+ for Half-Life and Quake sprites

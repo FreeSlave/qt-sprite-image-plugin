@@ -22,7 +22,7 @@ kde4_add_plugin(kimg_qspr ${kimg_qspr_LIB_SRCS})
 target_link_libraries(kimg_qspr ${QT_QTGUI_LIBRARY} ${QT_QTCORE_LIBRARY})
 
 install(TARGETS kimg_qspr  DESTINATION ${PLUGIN_INSTALL_DIR}/plugins/imageformats/ )
-install(FILES qspr.desktop DESTINATION ${SERVICES_INSTALL_DIR}/qimageioplugins/)
+install(FILES qspr.desktop hlspr.desktop spr32.desktop DESTINATION ${SERVICES_INSTALL_DIR}/qimageioplugins/)
 install(FILES qsprthumbnail.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 
 install(FILES qspr.xml DESTINATION ${XDG_MIME_INSTALL_DIR})

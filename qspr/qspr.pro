@@ -20,7 +20,9 @@ HEADERS += qsprplugin.h \
 OTHER_FILES += qspr.json \
     qspr.desktop \
     qsprthumbnail.desktop \
-    qspr.xml
+    qspr.xml \
+    spr32.desktop \
+    hlspr.desktop
 
 unix {
     target.path = $$[QT_INSTALL_PLUGINS]/imageformats

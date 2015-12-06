@@ -1,3 +1,9 @@
+kde4-qspr (1.1-1) unstable; urgency=low
+
+  * Bump version (Closes: #123457)
+
+ -- Roman Chistokhodov <freeslave93@gmail.com>  Sun, 06 Dec 2015 19:50:30 +0300
+
 kde4-qspr (1.0-1) unstable; urgency=low
 
   * Initial release (Closes: #123456)
