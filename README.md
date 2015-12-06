@@ -15,6 +15,7 @@ Install dependencies (these are for for Debian jessie):
 Building and installing:
 
     mkdir build && cd build
+    export QT_SELECT=4
     cmake -DCMAKE_INSTALL_PREFIX=/usr ../qspr/
     make
     sudo make install
