@@ -1,4 +1,4 @@
 {
     "Keys" : [ "spr" ],
-    "MimeTypes" : ["image/x-hlsprite", "image/x-qsprite", "application/x-hlsprite", "application/x-qsprite"]
+    "MimeTypes" : ["image/x-hlsprite", "image/x-qsprite", "application/x-hlsprite", "application/x-qsprite", "image/x-sprite32", "application/x-sprite32"]
 }

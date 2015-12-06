@@ -99,7 +99,7 @@ bool QSprHandler::canRead(QIODevice *device, int* version)
 
     device->seek(oldPos);
 
-    return stream.status() == QDataStream::Ok && id == IDSPRITEHEADER && (ver == SPRITE_HL_VERSION || ver == SPRITE_QUAKE_VERSION);
+    return stream.status() == QDataStream::Ok && id == IDSPRITEHEADER && (ver == SPRITE_HL_VERSION || ver == SPRITE_QUAKE_VERSION || ver == SPRITE32_VERSION);
 }
 
 bool QSprHandler::readSpriteHeader(QIODevice* device, SpriteHeader* header)
@@ -123,7 +123,7 @@ bool QSprHandler::readSpriteHeader(QIODevice* device, SpriteHeader* header)
         header->numFrames = sprHeader.numframes;
         header->size = QSize(sprHeader.width, sprHeader.height);
         return stream.status() == QDataStream::Ok;
-    } else if (version == SPRITE_QUAKE_VERSION) {
+    } else if (version == SPRITE_QUAKE_VERSION || version == SPRITE32_VERSION) {
         dquakesprite_t sprHeader;
         stream >> sprHeader;
 
@@ -269,9 +269,11 @@ bool QSprHandler::read(QImage *image)
             return false;
         }
         if (readSpriteHeader(device(), &_header)) {
-            _palette = readPalette(device(), _header);
-            if (_palette.empty()) {
-                return false;
+            if (_header.version != SPRITE32_VERSION) {
+                _palette = readPalette(device(), _header);
+                if (_palette.empty()) {
+                    return false;
+                }
             }
             _startPos = device()->pos();
         } else {
@@ -323,20 +325,43 @@ bool QSprHandler::readFrame(QImage *presult)
         dspriteframe_t frameStruct;
         stream >> frameStruct;
 
-        QByteArray dataArr(frameStruct.width*frameStruct.height, '\0');
-        if (stream.readRawData(dataArr.data(), dataArr.size()) < dataArr.size()) {
-            return false;
+        if (_header.version != SPRITE32_VERSION) {
+            QByteArray dataArr(frameStruct.width*frameStruct.height, '\0');
+            if (stream.readRawData(dataArr.data(), dataArr.size()) < dataArr.size()) {
+                return false;
+            }
+
+            const uchar* dataBytes = reinterpret_cast<const uchar*>(dataArr.constData());
+
+            QImage result(frameStruct.width, frameStruct.height, QImage::Format_Indexed8);
+            result.setColorTable(_palette);
+
+            uchar* imageData = result.bits();
+            for (int j=0; j<frameStruct.width*frameStruct.height; ++j) {
+                imageData[j] = dataBytes[j];
+            }
+            *presult = result;
+        } else {
+            QByteArray dataArr(frameStruct.width*frameStruct.height*4, '\0');
+            if (stream.readRawData(dataArr.data(), dataArr.size()) < dataArr.size()) {
+                return false;
+            }
+
+            const uchar* dataBytes = reinterpret_cast<const uchar*>(dataArr.constData());
+
+            QImage result(frameStruct.width, frameStruct.height, QImage::Format_ARGB32);
+            uchar* imageData = result.bits();
+            for (int j=0; j<frameStruct.height*frameStruct.width; ++j)
+            {
+                imageData[j*4+3] = dataBytes[j*4+3];
+                imageData[j*4+0] = dataBytes[j*4+2];
+                imageData[j*4+1] = dataBytes[j*4+1];
+                imageData[j*4+2] = dataBytes[j*4+0];
+            }
+
+            *presult = result;
         }
 
-        const uchar* dataBytes = reinterpret_cast<const uchar*>(dataArr.constData());
-        QImage result(frameStruct.width, frameStruct.height, QImage::Format_Indexed8);
-        result.setColorTable(_palette);
-
-        uchar* imageData = result.bits();
-        for (int j=0; j<frameStruct.width*frameStruct.height; ++j) {
-            imageData[j] = dataBytes[j];
-        }
-        *presult = result;
         return stream.status() == QDataStream::Ok;
     } else {
         return false;

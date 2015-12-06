@@ -2,6 +2,6 @@
 Type=Service
 Name=Half-Life Sprites
 X-KDE-ServiceTypes=ThumbCreator
-MimeType=image/x-hlsprite;application/x-hlsprite;image/x-qsprite;application/x-qsprite;
+MimeType=image/x-hlsprite;application/x-hlsprite;image/x-qsprite;application/x-qsprite;image/x-sprite32;application/x-sprite32;
 X-KDE-Library=imagethumbnail
 CacheThumbnail=true

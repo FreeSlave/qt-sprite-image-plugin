@@ -13,6 +13,7 @@
 
 #define SPRITE_QUAKE_VERSION	1
 #define SPRITE_HL_VERSION	2
+#define SPRITE32_VERSION	32
 
 enum {
     IDSPRITEHEADER = (('P'<<24)+('S'<<16)+('D'<<8)+'I')
@@ -33,8 +34,6 @@ typedef struct {
     int			numframes;
     float		beamlength;
     synctype_t	synctype;
-
-    enum {SIZE = 40};
 } dsprite_t;
 
 typedef struct {
@@ -47,7 +46,6 @@ typedef struct {
     int			numframes;
     float		beamlength;
     synctype_t	synctype;
-    enum {SIZE = 36};
 } dquakesprite_t;
 
 enum {
