@@ -13,3 +13,4 @@ Makefile
 *.deb
 *.tar.gz
 *.tar.xz
+moc_*
