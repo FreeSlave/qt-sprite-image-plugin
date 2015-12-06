@@ -10,8 +10,6 @@ TARGET = qspr
 TEMPLATE = lib
 CONFIG += plugin
 
-#DESTDIR = $$[QT_INSTALL_PLUGINS]/imageformats
-
 SOURCES += qsprplugin.cpp \
     qsprhandler.cpp \
     spritedefs.cpp
@@ -25,6 +23,6 @@ OTHER_FILES += qspr.json \
     qspr.xml
 
 unix {
-    target.path = /usr/lib
+    target.path = $$[QT_INSTALL_PLUGINS]/imageformats
     INSTALLS += target
 }
