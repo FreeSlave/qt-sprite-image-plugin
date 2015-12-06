@@ -15,6 +15,7 @@
 class QSprPlugin : public QImageIOPlugin
 {
 #if QT_VERSION >= 0x050000
+    Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QImageIOHandlerFactoryInterface" FILE "qspr.json")
 #endif // QT_VERSION >= 0x050000
 
