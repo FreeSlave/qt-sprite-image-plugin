@@ -14,7 +14,7 @@
         <glob pattern="*.spr"/>
         <alias type="application/x-qsprite"/>
     </mime-type>
-
+    
     <mime-type type="image/x-sprite32">
         <comment>Darkplaces 32bit color sprite</comment>
         <icon name="image-x-sprite32"/>
@@ -27,7 +27,7 @@
         <glob pattern="*.spr32"/>
         <glob pattern="*.sp2"/>
         <glob pattern="*.spr"/>
-        <alias type="application/x-qsprite"/>
+        <alias type="application/x-sprite32"/>
     </mime-type>
     
     <mime-type type="image/x-hlsprite">
@@ -51,6 +51,6 @@
             <match value="IDS2" type="string" offset="0"/>
         </magic>
         <glob pattern="*.sp2"/>
-        <alias type="image/x-q2sprite"/>
+        <alias type="application/x-q2sprite"/>
     </mime-type>
 </mime-info>
