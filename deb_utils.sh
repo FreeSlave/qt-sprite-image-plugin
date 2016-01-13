@@ -28,6 +28,7 @@ create_basetgz_path()
     echo "$BASETGZPATH/$1-$2.tgz"
 }
 
+# TODO: change hardcoded ftp to option to choose the of server
 PBUILDER_OPTIONS="--mirror ftp://ftp.us.debian.org/debian/ --debootstrapopts --keyring=/usr/share/keyrings/debian-archive-keyring.gpg"
 
 create_pbuilder()
@@ -52,7 +53,8 @@ create_package()
     local QSPR=$3
     
     (cd deb/$QSPR && dpkg-source -b .)
-    (cd deb/$QSPR && pdebuild -- --basetgz $(create_basetgz_path "$DISTRO" "$ARCH") ../${QSPR}_${VERSION}-1.dsc )
+    # TODO: try --use-pdebuild-internal
+    (cd deb/$QSPR && mkdir -p ../../result && pdebuild --buildresult ../../result -- --basetgz $(create_basetgz_path "$DISTRO" "$ARCH") ../${QSPR}_${VERSION}-1.dsc )
 }
 
 if [ -z $1 ]; then
@@ -91,18 +93,18 @@ elif [ $1 = "packages" ]; then
     case "$(uname -m)" in
         *x86_64|amd64)
             create_package "wheezy" "amd64" "$QT4QSPR"
-            create_package "jessie" "amd64" "$QT5QSPR"
-            create_package "jessie" "amd64" "$KDE4QSPR"
-            create_package "stretch" "amd64" "$KDE5QSPR"
+#             create_package "jessie" "amd64" "$QT5QSPR"
+#             create_package "jessie" "amd64" "$KDE4QSPR"
+#             create_package "stretch" "amd64" "$KDE5QSPR"
             ;;
     esac
     
     case "$(uname -m)" in
         *x86_64|amd64|*i*86)
-            create_package "wheezy" "i386" "$QT4QSPR"
-            create_package "jessie" "i386" "$QT5QSPR"
-            create_package "jessie" "i386" "$KDE4QSPR"
-            create_package "stretch" "i386" "$KDE5QSPR"
+#             create_package "wheezy" "i386" "$QT4QSPR"
+#             create_package "jessie" "i386" "$QT5QSPR"
+#             create_package "jessie" "i386" "$KDE4QSPR"
+#             create_package "stretch" "i386" "$KDE5QSPR"
             ;;
     esac    
 
