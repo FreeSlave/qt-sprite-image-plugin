@@ -1,5 +1,5 @@
-kde5-qspr (1.2-1) unstable; urgency=low
+kde5-qspr (1.1-1) UNRELEASED; urgency=medium
 
-  * Bump version (Closes: #123457)
+  * Initial release. (Closes: #123456)
 
- -- Roman Chistokhodov <freeslave93@gmail.com>  Sun, SETDATELATER
+ -- Roman Chistokhodov <freeslave93@gmail.com>  Wed, 13 Jan 2016 12:43:24 +0300

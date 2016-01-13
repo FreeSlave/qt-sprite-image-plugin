@@ -11,33 +11,24 @@ BASETGZPATH=/var/cache/pbuilder
 
 FILES="qspr/spritedefs.cpp qspr/spritedefs.h qspr/qsprhandler.cpp qspr/qsprhandler.h qspr/qsprplugin.cpp qspr/qsprplugin.h qspr/qspr.json  qspr/qspr.xml qspr/qspr.desktop qspr/hlspr.desktop qspr/spr32.desktop qspr/qsprthumbnail.desktop"
 
-ARCHIVE=./deb/qspr_$VERSION.orig.tar.gz
-
-prepare_source()
-{
-    tar czf "$ARCHIVE" $FILES "qspr/qspr.pro" "qspr/CMakeLists-KDE4.txt" "qspr/CMakeLists-KDE5.txt"
-    tar xf "$ARCHIVE" --directory ./deb
-}
-
 create_source()
 {
     local QSPR=$1
     local PROJECT=$2
-    local RENAME=$3
+    local TAR_OPTIONS=$3
     
-    ln -f "./deb/qspr/$PROJECT" "./deb/$QSPR/$RENAME"
-    ln -f "$ARCHIVE" ./deb/${QSPR}_${VERSION}.orig.tar.gz
+    local ARCHIVE="./deb/${QSPR}_${VERSION}.orig.tar.gz"
     
-    for i in $FILES
-    do
-        ln -f ./deb/qspr/`basename $i` ./deb/$QSPR/`basename $i`
-    done
+    tar czf "$ARCHIVE" --transform="flags=r;s|qspr/|$QSPR/|"  $TAR_OPTIONS $FILES $PROJECT
+    tar xf "$ARCHIVE" --directory ./deb
 }
 
 create_basetgz_path()
 {
     echo "$BASETGZPATH/$1-$2.tgz"
 }
+
+PBUILDER_OPTIONS="--mirror ftp://ftp.us.debian.org/debian/ --debootstrapopts --keyring=/usr/share/keyrings/debian-archive-keyring.gpg"
 
 create_pbuilder()
 {
@@ -47,10 +38,10 @@ create_pbuilder()
     
     if [ -f $BASETGZ ]; then
         echo "Updating $BASETGZ"
-        pbuilder --update --basetgz $BASETGZ --distribution $DISTRO --architecture $ARCH
+        pbuilder --update --basetgz $BASETGZ --distribution $DISTRO --architecture $ARCH $PBUILDER_OPTIONS
     else
         echo "Creating $BASETGZ"
-        pbuilder create --basetgz $BASETGZ --distribution $DISTRO --architecture $ARCH
+        pbuilder create --basetgz $BASETGZ --distribution $DISTRO --architecture $ARCH $PBUILDER_OPTIONS
     fi
 }
 
@@ -71,30 +62,26 @@ fi
 
 if [ $1 = "sources" ]; then
     echo "Creating sources"
-    prepare_source
-    create_source "$QT4QSPR" "qspr.pro" "qspr.pro"
-    create_source "$QT5QSPR" "qspr.pro" "qspr.pro"
-    create_source "$KDE4QSPR" "CMakeLists-KDE4.txt" "CMakeLists.txt"
-    create_source "$KDE5QSPR" "CMakeLists-KDE5.txt" "CMakeLists.txt"
+    create_source "$QT4QSPR" "qspr/qspr.pro" --transform=''
+    create_source "$QT5QSPR" "qspr/qspr.pro" --transform=''
+    create_source "$KDE4QSPR" "qspr/CMakeLists-KDE4.txt" --transform='flags=r;s|CMakeLists-KDE4.txt|CMakeLists.txt|'
+    create_source "$KDE5QSPR" "qspr/CMakeLists-KDE5.txt" --transform='flags=r;s|CMakeLists-KDE5.txt|CMakeLists.txt|'
 elif [ $1 = "pbuilder" ]; then
     echo "Creating/Updating pbuilder chroots"
     
     case "$(uname -m)" in
         *x86_64|amd64)
-            create_pbuilder "wheezy" "i386"
-            create_pbuilder "jessie" "i386"
-            create_pbuilder "stretch" "i386"
             create_pbuilder "wheezy" "amd64"
             create_pbuilder "jessie" "amd64"
             create_pbuilder "stretch" "amd64"
             ;;
-        *i*86)
+    esac
+    
+    case "$(uname -m)" in
+        *x86_64|amd64|*i*86)
             create_pbuilder "wheezy" "i386"
             create_pbuilder "jessie" "i386"
             create_pbuilder "stretch" "i386"
-            ;;
-        *)
-            echo "Script supports only amd64 and i386 pbuilder chroots"
             ;;
     esac
     
@@ -103,25 +90,22 @@ elif [ $1 = "packages" ]; then
     
     case "$(uname -m)" in
         *x86_64|amd64)
-            create_package "wheezy" "i386" "$QT4QSPR"
-            create_package "jessie" "i386" "$QT5QSPR"
-            create_package "jessie" "i386" "$KDE4QSPR"
-            create_package "stretch" "i386" "$KDE5QSPR"
             create_package "wheezy" "amd64" "$QT4QSPR"
             create_package "jessie" "amd64" "$QT5QSPR"
             create_package "jessie" "amd64" "$KDE4QSPR"
             create_package "stretch" "amd64" "$KDE5QSPR"
             ;;
-        *i*86)
+    esac
+    
+    case "$(uname -m)" in
+        *x86_64|amd64|*i*86)
             create_package "wheezy" "i386" "$QT4QSPR"
             create_package "jessie" "i386" "$QT5QSPR"
             create_package "jessie" "i386" "$KDE4QSPR"
             create_package "stretch" "i386" "$KDE5QSPR"
             ;;
-        *)
-            echo "Script supports only amd64 and i386 pbuilder chroots"
-            ;;
-    esac
+    esac    
+
 else 
     echo "Specify one of these actions: sources|pbuilder|packages"
     exit 1
