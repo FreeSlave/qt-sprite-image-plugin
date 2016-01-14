@@ -14,3 +14,4 @@ Makefile
 *.tar.gz
 *.tar.xz
 moc_*
+*.upload

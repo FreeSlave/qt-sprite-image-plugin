@@ -179,7 +179,7 @@ QVector<QRgb> QSprHandler::readPalette(QIODevice *device, const SpriteHeader &he
     }
 }
 
-QSprHandler::QSprHandler() : _frameIndex(-1), _nextIndex(0), _startPos(0)
+QSprHandler::QSprHandler() : _frameIndex(-1), _nextIndex(0)
 {
 }
 
@@ -249,7 +249,7 @@ QVariant QSprHandler::option(ImageOption option) const
         SpriteHeader header;
         if (readSpriteHeader(device(), &header)) {
             QVector<QRgb> palette = readPalette(device(), header);
-            if (header.version == SPRITE_QUAKE_VERSION || header.texFormat == SPR_ALPHTEST) {
+            if (palette.size() && (header.version == SPRITE_QUAKE_VERSION || header.texFormat == SPR_ALPHTEST)) {
                 color = QColor::fromRgba(palette.last());
             }
         }
@@ -275,7 +275,6 @@ bool QSprHandler::read(QImage *image)
                     return false;
                 }
             }
-            _startPos = device()->pos();
         } else {
             return false;
         }
@@ -291,9 +290,9 @@ bool QSprHandler::read(QImage *image)
             }
         }
 
-        if (_nextIndex > 0 && _frames.size() == 1) {
+        if (_nextIndex > 0 && _frames.size() < _header.numFrames) {
             //cache all frames when requested frame other than the first
-            for (int i=1; i<_header.numFrames; ++i) {
+            for (int i = _frames.size(); i < _header.numFrames; ++i) {
                 QImage image;
                 if (readFrame(&image)) {
                     _frames.append(image);

@@ -9,6 +9,9 @@ KDE5QSPR=kde5-qspr
 
 BASETGZPATH=/var/cache/pbuilder
 
+MIRROR="ftp://ftp.cz.debian.org/debian/"
+PBUILDER_OPTIONS="--mirror $MIRROR --debootstrapopts --keyring=/usr/share/keyrings/debian-archive-keyring.gpg"
+
 FILES="qspr/spritedefs.cpp qspr/spritedefs.h qspr/qsprhandler.cpp qspr/qsprhandler.h qspr/qsprplugin.cpp qspr/qsprplugin.h qspr/qspr.json  qspr/qspr.xml qspr/qspr.desktop qspr/hlspr.desktop qspr/spr32.desktop qspr/qsprthumbnail.desktop"
 
 create_source()
@@ -27,9 +30,6 @@ create_basetgz_path()
 {
     echo "$BASETGZPATH/$1-$2.tgz"
 }
-
-# TODO: change hardcoded ftp to option to choose the of server
-PBUILDER_OPTIONS="--mirror ftp://ftp.us.debian.org/debian/ --debootstrapopts --keyring=/usr/share/keyrings/debian-archive-keyring.gpg"
 
 create_pbuilder()
 {
@@ -93,15 +93,15 @@ elif [ $1 = "packages" ]; then
     case "$(uname -m)" in
         *x86_64|amd64)
             create_package "wheezy" "amd64" "$QT4QSPR"
-#             create_package "jessie" "amd64" "$QT5QSPR"
-#             create_package "jessie" "amd64" "$KDE4QSPR"
-#             create_package "stretch" "amd64" "$KDE5QSPR"
+            create_package "jessie" "amd64" "$QT5QSPR"
+            create_package "jessie" "amd64" "$KDE4QSPR"
+            create_package "stretch" "amd64" "$KDE5QSPR"
             ;;
     esac
     
     case "$(uname -m)" in
         *x86_64|amd64|*i*86)
-#             create_package "wheezy" "i386" "$QT4QSPR"
+            create_package "wheezy" "i386" "$QT4QSPR"
 #             create_package "jessie" "i386" "$QT5QSPR"
 #             create_package "jessie" "i386" "$KDE4QSPR"
 #             create_package "stretch" "i386" "$KDE5QSPR"

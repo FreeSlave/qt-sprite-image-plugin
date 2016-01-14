@@ -61,7 +61,6 @@ private:
     QVector<QImage> _frames; //cache
     int _frameIndex;
     int _nextIndex;
-    qint64 _startPos;
 };
 
 #endif // QSPRHANDLER_H
