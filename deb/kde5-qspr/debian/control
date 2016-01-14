@@ -1,7 +1,7 @@
 Source: kde5-qspr
 Priority: optional
 Maintainer: Roman Chistokhodov <freeslave93@gmail.com>
-Build-Depends: debhelper (>= 9), qtbase5-dev (>= 5.0.0), cmake (>= 2.8.12), extra-cmake-modules (>= 5.15.0), shared-mime-info (>= 1.0)
+Build-Depends: debhelper (>= 9), qtbase5-dev (>= 5.0.0), cmake (>= 2.8.12), extra-cmake-modules (>= 5.9.0), shared-mime-info (>= 1.0)
 Standards-Version: 3.9.5
 Section: libs
 Homepage: https://bitbucket.org/FreeSlave/qt-sprite-image-plugin

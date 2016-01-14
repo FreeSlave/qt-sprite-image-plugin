@@ -9,8 +9,8 @@ KDE5QSPR=kde5-qspr
 
 BASETGZPATH=/var/cache/pbuilder
 
-MIRROR="ftp://ftp.cz.debian.org/debian/"
-PBUILDER_OPTIONS="--mirror $MIRROR --debootstrapopts --keyring=/usr/share/keyrings/debian-archive-keyring.gpg"
+# DEBIAN_MIRROR="ftp://ftp.cz.debian.org/debian/"
+# DEBIAN_PBUILDER_OPTIONS="--mirror $DEBIAN_MIRROR --debootstrapopts --keyring=/usr/share/keyrings/debian-archive-keyring.gpg"
 
 FILES="qspr/spritedefs.cpp qspr/spritedefs.h qspr/qsprhandler.cpp qspr/qsprhandler.h qspr/qsprplugin.cpp qspr/qsprplugin.h qspr/qspr.json  qspr/qspr.xml qspr/qspr.desktop qspr/hlspr.desktop qspr/spr32.desktop qspr/qsprthumbnail.desktop"
 
@@ -39,10 +39,10 @@ create_pbuilder()
     
     if [ -f $BASETGZ ]; then
         echo "Updating $BASETGZ"
-        pbuilder --update --basetgz $BASETGZ --distribution $DISTRO --architecture $ARCH --override-config $PBUILDER_OPTIONS
+        pbuilder --update --basetgz $BASETGZ --distribution $DISTRO --architecture $ARCH --override-config
     else
         echo "Creating $BASETGZ"
-        pbuilder create --basetgz $BASETGZ --distribution $DISTRO --architecture $ARCH $PBUILDER_OPTIONS
+        pbuilder create --basetgz $BASETGZ --distribution $DISTRO --architecture $ARCH
     fi
 }
 
@@ -73,17 +73,17 @@ elif [ $1 = "pbuilder" ]; then
     
     case "$(uname -m)" in
         *x86_64|amd64)
-            create_pbuilder "wheezy" "amd64"
-            create_pbuilder "jessie" "amd64"
-            create_pbuilder "stretch" "amd64"
+            create_pbuilder "precise" "amd64"
+            create_pbuilder "trusty" "amd64"
+            create_pbuilder "vivid" "amd64"
             ;;
     esac
     
     case "$(uname -m)" in
         *x86_64|amd64|*i*86)
-            create_pbuilder "wheezy" "i386"
-            create_pbuilder "jessie" "i386"
-            create_pbuilder "stretch" "i386"
+            create_pbuilder "precise" "i386"
+            create_pbuilder "trusty" "i386"
+            create_pbuilder "vivid" "i386"
             ;;
     esac
     
@@ -92,19 +92,19 @@ elif [ $1 = "packages" ]; then
     
     case "$(uname -m)" in
         *x86_64|amd64)
-            create_package "wheezy" "amd64" "$QT4QSPR"
-            create_package "jessie" "amd64" "$QT5QSPR"
-            create_package "jessie" "amd64" "$KDE4QSPR"
-            create_package "stretch" "amd64" "$KDE5QSPR"
+            create_package "precise" "amd64" "$QT4QSPR"
+            create_package "trusty" "amd64" "$QT5QSPR"
+            create_package "trusty" "amd64" "$KDE4QSPR"
+            create_package "vivid" "amd64" "$KDE5QSPR"
             ;;
     esac
     
     case "$(uname -m)" in
         *x86_64|amd64|*i*86)
-            create_package "wheezy" "i386" "$QT4QSPR"
-            create_package "jessie" "i386" "$QT5QSPR"
-            create_package "jessie" "i386" "$KDE4QSPR"
-            create_package "stretch" "i386" "$KDE5QSPR"
+            create_package "precise" "i386" "$QT4QSPR"
+            create_package "trusty" "i386" "$QT5QSPR"
+            create_package "trusty" "i386" "$KDE4QSPR"
+            create_package "vivid" "i386" "$KDE5QSPR"
             ;;
     esac    
 
