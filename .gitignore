@@ -1,6 +1,6 @@
 build*Debug/
 build*Release/
-build
+build*/
 *.user
 *.so
 *.o
@@ -15,3 +15,4 @@ Makefile
 *.tar.xz
 moc_*
 *.upload
+qspr/CMakeLists.txt

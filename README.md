@@ -18,7 +18,7 @@ For KDE4:
     
 For KDE5:
 
-    sudo apt-get install qtbase5-dev qt4-qmake
+    sudo apt-get install qtbase5-dev qmake
     export QT_SELECT=5 # ensure qmake points to qmake qt version 5.
     (cd qspr && qmake && make)
     ./install.sh
@@ -34,7 +34,8 @@ This method will install plugin globally on the system (for all users).
 For KDE4:
 
     sudo apt-get install cmake libqt4-dev kdelibs5-dev
-    mkdir build-kde4 && cd build-kde4
+    ln -f qspr/CMakeLists-KDE4.txt qspr/CMakeLists.txt
+    mkdir -p build-kde4 && cd build-kde4
     export QT_SELECT=4
     cmake -DCMAKE_INSTALL_PREFIX=/usr ../qspr/
     make
@@ -43,7 +44,8 @@ For KDE4:
 For KDE5:
 
     sudo apt-get install cmake qtbase5-dev extra-cmake-modules
-    mkdir build-kde5 && cd build-kde5
+    ln -f qspr/CMakeLists-KDE5.txt qspr/CMakeLists.txt
+    mkdir -p build-kde5 && cd build-kde5
     export QT_SELECT=5
     cmake -DCMAKE_INSTALL_PREFIX=/usr ../qspr/
     make

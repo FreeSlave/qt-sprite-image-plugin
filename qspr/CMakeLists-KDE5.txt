@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.12)
 
-project(myproj)
+project(qspr)
 
 include(FeatureSummary)
 find_package(ECM 5.15.0  NO_MODULE)

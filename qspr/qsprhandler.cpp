@@ -204,7 +204,19 @@ int QSprHandler::currentImageNumber() const
 
 int QSprHandler::imageCount() const
 {
-    return _header.numFrames;
+    if (_header.numFrames) {
+        return _header.numFrames;
+    }
+    
+    qint64 pos = device()->pos();
+    SpriteHeader header;
+    bool ok = readSpriteHeader(device(), &header);
+    device()->seek(pos);
+    if (ok) {
+        return header.numFrames;
+    } else {
+        return -1;
+    }
 }
 
 bool QSprHandler::jumpToImage(int imageNumber)
@@ -234,7 +246,19 @@ int QSprHandler::nextImageDelay() const
 QVariant QSprHandler::option(ImageOption option) const
 {
     if (option == ImageFormat) {
-        return QImage::Format_Indexed8;
+        qint64 pos = device()->pos();
+        SpriteHeader header;
+        bool ok = readSpriteHeader(device(), &header);
+        device()->seek(pos);
+        if (ok) {
+            if (header.version == SPRITE32_VERSION) {
+                return QImage::Format_ARGB32;
+            } else {
+                return QImage::Format_Indexed8;
+            }
+        } else {
+            return QImage::Format_Invalid;
+        }
     } else if (option == Size) {
         qint64 pos = device()->pos();
         SpriteHeader header;
@@ -268,7 +292,9 @@ bool QSprHandler::read(QImage *image)
         if (!canRead(device(), &version)) {
             return false;
         }
-        if (readSpriteHeader(device(), &_header)) {
+        SpriteHeader header;
+        if (readSpriteHeader(device(), &header)) {
+            _header = header;
             if (_header.version != SPRITE32_VERSION) {
                 _palette = readPalette(device(), _header);
                 if (_palette.empty()) {
@@ -290,7 +316,7 @@ bool QSprHandler::read(QImage *image)
             }
         }
 
-        if (_nextIndex > 0 && _frames.size() < _header.numFrames) {
+        if (_nextIndex > 0) {
             //cache all frames when requested frame other than the first
             for (int i = _frames.size(); i < _header.numFrames; ++i) {
                 QImage image;

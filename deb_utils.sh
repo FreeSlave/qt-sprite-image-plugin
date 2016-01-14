@@ -1,6 +1,6 @@
 #!/bin/sh
 
-VERSION=1.1
+VERSION=1.2
 
 QT4QSPR=qt4-qspr
 QT5QSPR=qt5-qspr
@@ -39,7 +39,7 @@ create_pbuilder()
     
     if [ -f $BASETGZ ]; then
         echo "Updating $BASETGZ"
-        pbuilder --update --basetgz $BASETGZ --distribution $DISTRO --architecture $ARCH $PBUILDER_OPTIONS
+        pbuilder --update --basetgz $BASETGZ --distribution $DISTRO --architecture $ARCH --override-config $PBUILDER_OPTIONS
     else
         echo "Creating $BASETGZ"
         pbuilder create --basetgz $BASETGZ --distribution $DISTRO --architecture $ARCH $PBUILDER_OPTIONS
@@ -102,9 +102,9 @@ elif [ $1 = "packages" ]; then
     case "$(uname -m)" in
         *x86_64|amd64|*i*86)
             create_package "wheezy" "i386" "$QT4QSPR"
-#             create_package "jessie" "i386" "$QT5QSPR"
-#             create_package "jessie" "i386" "$KDE4QSPR"
-#             create_package "stretch" "i386" "$KDE5QSPR"
+            create_package "jessie" "i386" "$QT5QSPR"
+            create_package "jessie" "i386" "$KDE4QSPR"
+            create_package "stretch" "i386" "$KDE5QSPR"
             ;;
     esac    
 
