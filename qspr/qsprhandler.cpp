@@ -451,5 +451,5 @@ bool QSprHandler::write(const QImage &image)
     stream << frame;
     stream.writeRawData(reinterpret_cast<const char*>(converted.bits()), size.width() * size.height());
 
-    return stream.status() != QDataStream::WriteFailed;
+    return stream.status() == QDataStream::Ok;
 }
