@@ -11,8 +11,10 @@ COMMON_FILES="qspr/spritedefs.cpp qspr/spritedefs.h qspr/qsprhandler.cpp qspr/qs
 
 TARGET_DIR="$HOME/rpmbuild"
 
-if [ ! -z "$1" ]; then
-    TARGET_DIR="$1"
+QTSPR="$1"
+
+if [ ! -z "$2" ]; then
+    TARGET_DIR="$2"
 fi
 
 create_source()
@@ -23,9 +25,9 @@ create_source()
     
     local ARCHIVE="./rpm/$QSPR-$VERSION.tar.gz"
     
-    tar czf "$ARCHIVE" --transform="flags=r;s|qspr/|$QSPR-$VERSION/|" $FILES
+    tar czf "$ARCHIVE" --transform="flags=r;s|qspr/|$QSPR-$VERSION/|" $TAR_OPTIONS $FILES
     mv "$ARCHIVE" "$TARGET_DIR/SOURCES"
-    cp rpm/qt4-qspr.spec "$TARGET_DIR/SPECS"
+    cp "rpm/$QSPR.spec" "$TARGET_DIR/SPECS"
 }
 
 create_package()
@@ -39,17 +41,35 @@ create_package()
     mock --resultdir="$TARGET_DIR/$QSPR/$CONFIGURATION" -r "$CONFIGURATION" "$TARGET_DIR/SRPMS/$SRCRPM"
 }
 
+create_packages()
+{
+    local QSPR=$1
+    local VENDOR=$2
+    local BASE=$3
+    
+    case "$(uname -m)" in
+        *x86_64|amd64)
+            create_package "$BASE-x86_64" "$QSPR" "$VENDOR"
+            ;;
+    esac
 
-create_source "$QT4QSPR" "$COMMON_FILES qspr/qspr.pro" --transform=''
+    case "$(uname -m)" in
+       *x86_64|amd64|*i*86)
+           create_package "$BASE-i386" "$QSPR" "$VENDOR"
+           ;;
+    esac   
+}
 
-case "$(uname -m)" in
-    *x86_64|amd64)
-        create_package "epel-6-x86_64" "$QT4QSPR" el6
-        ;;
-esac
-
-case "$(uname -m)" in
-    *x86_64|amd64|*i*86)
-        create_package "epel-6-i386" "$QT4QSPR" el6
-        ;;
-esac   
+if [ "$QTSPR" = qt4 ]; then
+    create_source "$QT4QSPR" "$COMMON_FILES qspr/qspr.pro" --transform=''
+    create_packages "$QT4QSPR" el6 epel-6
+elif [ "$QTSPR" = qt5 ]; then
+    create_source "$QT5QSPR" "$COMMON_FILES qspr/qspr.pro qspr/qspr.json" --transform=''
+    create_packages "$QT5QSPR" el6 epel-6
+elif [ "$QTSPR" = kde4 ]; then
+    KDE4_FILES="qspr/qspr.xml qspr/qspr.desktop qspr/hlspr.desktop qspr/spr32.desktop qspr/qsprthumbnail.desktop qspr/CMakeLists-KDE4.txt"
+    create_source "$KDE4QSPR" "$COMMON_FILES $KDE4_FILES" --transform='flags=r;s|CMakeLists-KDE4.txt|CMakeLists.txt|'
+    create_packages "$KDE4QSPR" fc19 fedora-19
+else
+    echo "Unknown target. Known targets are: qt4, qt5, kde4"
+fi

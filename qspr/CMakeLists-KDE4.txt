@@ -5,6 +5,7 @@ project(qspr)
 find_package(Qt4 4.6.0 REQUIRED QtGui QtCore)
 find_package(KDE4 REQUIRED)
 include (KDE4Defaults)
+add_definitions(${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
 
 find_package(SharedMimeInfo 0.60)
 set_package_properties(SharedMimeInfo PROPERTIES DESCRIPTION "Shared Mime Info"
