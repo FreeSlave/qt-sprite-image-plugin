@@ -53,11 +53,11 @@ create_packages()
             ;;
     esac
 
-    case "$(uname -m)" in
-       *x86_64|amd64|*i*86)
-           create_package "$BASE-i386" "$QSPR" "$VENDOR"
-           ;;
-    esac   
+#     case "$(uname -m)" in
+#        *x86_64|amd64|*i*86)
+#            create_package "$BASE-i386" "$QSPR" "$VENDOR"
+#            ;;
+#     esac
 }
 
 if [ "$QTSPR" = qt4 ]; then
@@ -70,6 +70,10 @@ elif [ "$QTSPR" = kde4 ]; then
     KDE4_FILES="qspr/qspr.xml qspr/qspr.desktop qspr/hlspr.desktop qspr/spr32.desktop qspr/qsprthumbnail.desktop qspr/CMakeLists-KDE4.txt"
     create_source "$KDE4QSPR" "$COMMON_FILES $KDE4_FILES" --transform='flags=r;s|CMakeLists-KDE4.txt|CMakeLists.txt|'
     create_packages "$KDE4QSPR" fc19 fedora-19
+elif [ "$QTSPR" = kde5 ]; then
+    KDE5_FILES="qspr/qspr.xml qspr/qspr.json qspr/qspr.desktop qspr/hlspr.desktop qspr/spr32.desktop qspr/qsprthumbnail.desktop qspr/CMakeLists-KDE5.txt"
+    create_source "$KDE5QSPR" "$COMMON_FILES $KDE5_FILES" --transform='flags=r;s|CMakeLists-KDE5.txt|CMakeLists.txt|'
+    create_packages "$KDE5QSPR" fc23 fedora-23
 else
-    echo "Unknown target. Known targets are: qt4, qt5, kde4"
+    echo "Unknown target. Known targets are: qt4, qt5, kde4, kde5"
 fi
