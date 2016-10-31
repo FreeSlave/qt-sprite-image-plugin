@@ -46,7 +46,7 @@ This method will install plugin only for the current user.
     # on Debian / Ubuntu:
     sudo apt-get install libqt4-dev qt4-qmake kdelibs-bin
     # or on Fedora:
-    sudo yum install qt-devel # replace yum with dnf for latter Fedora releases
+    sudo yum install qt-devel kdelibs # replace yum with dnf for latter Fedora releases
     
     (cd qspr && qmake-qt4 && make)
     ./install.sh
