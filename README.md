@@ -7,33 +7,6 @@ After plugin is installed Gwenview should be able to show sprite animation.
 
 Note: To enable sprite previews in Dolphin you must enable "Half-Life sprites" in Dolphin General/Previews settings.
 
-### Using qmake and scripts
-
-This method will install plugin only for the current user.
-
-For KDE4:
-
-    # on Debian / Ubuntu:
-    sudo apt-get install libqt4-dev qt4-qmake
-    # or on Fedora:
-    sudo yum install qt-devel # replace yum with dnf for latter Fedora releases
-    
-    (cd qspr && qmake-qt4 && make)
-    ./install.sh
-    
-Note: On some distros you probably need to edit the install.sh script to use **lib64** directory instead of **lib** in the *KDE_IMAGEFORMATS* variable.
-    
-For KDE5:
-
-    sudo apt-get install qtbase5-dev qmake
-    export QT_SELECT=5 # ensure qmake points to qmake qt version 5.
-    (cd qspr && qmake && make)
-    ./install.sh
-    
-To uninstall type:
-
-    ./uninstall.sh
-
 ### Using CMake
 
 This method will install plugin globally on the system (for all users).
@@ -65,3 +38,19 @@ For KDE5:
 To uninstall type:
 
     sudo make uninstall
+
+### Using qmake and scripts (KDE4 only)
+
+This method will install plugin only for the current user.
+
+    # on Debian / Ubuntu:
+    sudo apt-get install libqt4-dev qt4-qmake kdelibs-bin
+    # or on Fedora:
+    sudo yum install qt-devel # replace yum with dnf for latter Fedora releases
+    
+    (cd qspr && qmake-qt4 && make)
+    ./install.sh
+    
+Uninstall:
+
+    ./uninstall.sh
