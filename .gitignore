@@ -15,4 +15,3 @@ Makefile
 *.tar.xz
 moc_*
 *.upload
-qspr/CMakeLists.txt

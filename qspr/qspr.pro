@@ -17,12 +17,7 @@ SOURCES += qsprplugin.cpp \
 HEADERS += qsprplugin.h \
     qsprhandler.h \
     spritedefs.h
-OTHER_FILES += qspr.json \
-    qspr.desktop \
-    qsprthumbnail.desktop \
-    qspr.xml \
-    spr32.desktop \
-    hlspr.desktop
+OTHER_FILES += qspr.json
 
 unix {
     target.path = $$[QT_INSTALL_PLUGINS]/imageformats
