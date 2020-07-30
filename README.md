@@ -1,6 +1,6 @@
-QImageIOPlugin for Qt that provides support for Half-Life and Quake *.spr files.
+**QImageIOPlugin** for Qt that provides support for Half-Life and Quake *.spr files.
 
-This plugin is especially useful when using with KDE. There're several ways to install it (see below).
+This plugin is especially useful when using with KDE.
 After plugin is installed Gwenview should be able to show sprite images.
 
 Note: [qhl-mimetypes](https://github.com/FreeSlave/qhl-mimetypes) must be installed in order to provide MIME type definitions, so KDE apps could handle the sprite files correctly. Look at [OBS packages](https://software.opensuse.org//download.html?project=home%3AFreeSlave&package=qhl-mimetypes).
